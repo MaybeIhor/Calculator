@@ -1,0 +1,10 @@
+C:\Users\Thales\source\repos\Calculus\bin\x86\Release\Calculator.exe.config
+C:\Users\Thales\source\repos\Calculus\bin\x86\Release\Calculator.exe
+C:\Users\Thales\source\repos\Calculus\bin\x86\Release\Calculator.pdb
+C:\Users\Thales\source\repos\Calculus\obj\x86\Release\Calculator.csproj.AssemblyReference.cache
+C:\Users\Thales\source\repos\Calculus\obj\x86\Release\Calculus.form.resources
+C:\Users\Thales\source\repos\Calculus\obj\x86\Release\Calculator.Properties.Resources.resources
+C:\Users\Thales\source\repos\Calculus\obj\x86\Release\Calculator.csproj.GenerateResource.cache
+C:\Users\Thales\source\repos\Calculus\obj\x86\Release\Calculator.csproj.CoreCompileInputs.cache
+C:\Users\Thales\source\repos\Calculus\obj\x86\Release\Calculator.exe
+C:\Users\Thales\source\repos\Calculus\obj\x86\Release\Calculator.pdb
