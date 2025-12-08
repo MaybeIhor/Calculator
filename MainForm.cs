@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
+using System.Linq;
 using System.Windows.Forms;
 using Microsoft.Win32;
 
@@ -13,10 +14,8 @@ namespace Calculus
         public static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, int[] val, int size);
 
         private static readonly CultureInfo EnUs = CultureInfo.GetCultureInfo("en-US");
-        private static readonly string PiString = Math.PI.ToString(EnUs);
-        private static readonly string EString = Math.E.ToString(EnUs);
-
-        private string temp = string.Empty;
+        private string buffer = string.Empty;
+        private bool isLast = false;
 
         public form()
         {
@@ -26,64 +25,75 @@ namespace Calculus
             SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
         }
 
-        private void ApplyTheme()
+        private bool IsDarkModeEnabled()
         {
             using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize"))
             {
-                if (key?.GetValue("AppsUseLightTheme") is object themeValue && int.Parse(themeValue.ToString()) == 0)
-                {
-                    DwmSetWindowAttribute(this.Handle, 20, new[] { 1 }, 4);
-                    Color darkBg = Color.FromArgb(255, 25, 25, 25);
-                    Color darkerBg = Color.FromArgb(255, 19, 19, 19);
-                    Color lightText = SystemColors.Window;
+                return key?.GetValue("AppsUseLightTheme") is object val && int.Parse(val.ToString()) == 0;
+            }
+        }
 
-                    this.BackColor = darkBg;
-                    textBox1.BackColor = darkBg;
-                    textBox2.BackColor = darkerBg;
-                    label1.BackColor = darkBg;
-                    toolStrip.BackColor = darkBg;
-                    toolStrip.ForeColor = lightText;
-                    textBox1.ForeColor = lightText;
-                    label1.ForeColor = lightText;
-                    textBox2.ForeColor = SystemColors.ControlDark;
-                }
-                else
-                {
-                    textBox2.ForeColor = SystemColors.WindowFrame;
-                }
+        private void ApplyTheme()
+        {
+            if (IsDarkModeEnabled())
+            {
+                DwmSetWindowAttribute(Handle, 20, new[] { 1 }, 4);
+                Color darkBg = Color.FromArgb(255, 25, 25, 25);
+                Color darkerBg = Color.FromArgb(255, 19, 19, 19);
+
+                BackColor = inputBox.BackColor = toolStrip.BackColor = darkBg;
+                outputBox.BackColor = darkerBg;
+                toolStrip.ForeColor = inputBox.ForeColor = SystemColors.Window;
+                outputBox.ForeColor = SystemColors.ControlDark;
+            }
+            else
+            {
+                outputBox.ForeColor = SystemColors.WindowFrame;
             }
         }
 
         private void ToolStripButton1_Click(object sender, EventArgs e)
         {
-            if (textBox1.Text.Length > 0)
+            if (inputBox.Text.Length == 0) return;
+
+            int pos = inputBox.SelectionStart;
+            int len = inputBox.SelectionLength;
+
+            if (len > 0)
             {
-                int selectionStart = textBox1.SelectionStart;
-                int selectionLength = textBox1.SelectionLength;
-
-                if (selectionLength > 0)
-                {
-                    textBox1.Text = textBox1.Text.Remove(selectionStart, selectionLength);
-                    textBox1.SelectionStart = selectionStart;
-                }
-                else if (selectionStart > 0)
-                {
-                    textBox1.Text = textBox1.Text.Remove(selectionStart - 1, 1);
-                    textBox1.SelectionStart = selectionStart - 1;
-                }
-
-                textBox1.Focus();
+                inputBox.Text = inputBox.Text.Remove(pos, len);
+                inputBox.SelectionStart = pos;
             }
-        }
-        private void ToolStripButton2_Click(object sender, EventArgs e) => textBox1.Text = string.Empty;
+            else if (pos > 0)
+            {
+                inputBox.Text = inputBox.Text.Remove(pos - 1, 1);
+                inputBox.SelectionStart = pos - 1;
+            }
 
-        private void ToolStripButton3_Click(object sender, EventArgs e)
+            inputBox.Focus();
+        }
+
+        private void ToolStripButton2_Click(object sender, EventArgs e) => inputBox.Clear();
+        private void ToolStripButton3_Click(object sender, EventArgs e) => ShowPlot();
+
+        private void ShowPlot()
         {
-            this.TopMost = !this.TopMost;
-            toolStripButton3.Text = this.TopMost ? "Unpin" : "Pin";
+            if (string.IsNullOrEmpty(inputBox.Text))
+            {
+                inputBox.Text = "x^2; y*2";
+                return;
+            }
+
+            var plot = new plotForm();
+            if (IsDarkModeEnabled()) plot.SetDarkMode();
+
+            string[] parts = inputBox.Text.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            plot.SetArguments(parts.Length > 0 ? parts[0].Trim() : null,
+                            parts.Length > 1 ? parts[1].Trim() : null);
+            plot.Show();
         }
 
-        private void InsertText(string text) => textBox1.SelectedText = text;
+        private void InsertText(string text) => inputBox.SelectedText = text;
 
         private void ToolStripButton4_Click(object sender, EventArgs e) => InsertText("(");
         private void ToolStripButton5_Click(object sender, EventArgs e) => InsertText(")");
@@ -114,111 +124,96 @@ namespace Calculus
 
         public static double Evaluate(string ex)
         {
-            Stack<double> operands = new Stack<double>();
-            Stack<string> operators = new Stack<string>();
+            var operands = new Stack<double>();
+            var operators = new Stack<string>();
             int i = 0;
+            bool expectOperand = true;
 
             while (i < ex.Length)
             {
-                if (char.IsWhiteSpace(ex[i]))
-                {
-                    i++;
-                    continue;
-                }
+                if (char.IsWhiteSpace(ex[i])) { i++; continue; }
 
                 if (char.IsDigit(ex[i]) || ex[i] == '.')
                 {
                     int start = i;
-                    while (i < ex.Length && (char.IsDigit(ex[i]) || ex[i] == '.'))
-                        i++;
-
+                    while (i < ex.Length && (char.IsDigit(ex[i]) || ex[i] == '.')) i++;
                     operands.Push(double.Parse(ex.Substring(start, i - start), EnUs));
+                    expectOperand = false;
+                }
+                else if (ex[i] == '-' && expectOperand)
+                {
+                    operands.Push(0);
+                    operators.Push("-");
+                    i++;
                 }
                 else if (char.IsLetter(ex[i]))
                 {
                     int start = i;
-                    while (i < ex.Length && char.IsLetter(ex[i]))
-                        i++;
-
+                    while (i < ex.Length && char.IsLetter(ex[i])) i++;
                     operators.Push(ex.Substring(start, i - start));
+                    expectOperand = true;
                 }
                 else if (ex[i] == '(')
                 {
                     operators.Push("(");
                     i++;
+                    expectOperand = true;
                 }
                 else if (ex[i] == ',')
                 {
-                    while (operators.Peek() != "(")
-                        Apply(operands, operators.Pop());
+                    while (operators.Peek() != "(") Apply(operands, operators.Pop());
                     i++;
+                    expectOperand = true;
                 }
                 else if (ex[i] == ')')
                 {
-                    while (operators.Peek() != "(")
-                        Apply(operands, operators.Pop());
-
+                    while (operators.Peek() != "(") Apply(operands, operators.Pop());
                     operators.Pop();
-
                     if (operators.Count > 0 && IsFunction(operators.Peek()))
                         Apply(operands, operators.Pop());
-
                     i++;
+                    expectOperand = false;
                 }
                 else if (IsOperator(ex[i]))
                 {
-                    string current = ex[i].ToString();
-                    while (operators.Count > 0 && Precedence(operators.Peek()) >= Precedence(current))
+                    string op = ex[i].ToString();
+                    while (operators.Count > 0 && Precedence(operators.Peek()) >= Precedence(op))
                         Apply(operands, operators.Pop());
-
-                    operators.Push(current);
+                    operators.Push(op);
                     i++;
+                    expectOperand = true;
                 }
-                else
-                {
-                    throw new Exception();
-                }
+                else throw new Exception();
             }
 
-            while (operators.Count > 0)
-                Apply(operands, operators.Pop());
-
+            while (operators.Count > 0) Apply(operands, operators.Pop());
             return operands.Pop();
         }
 
-        private static bool IsOperator(char c) => c == '+' || c == '-' || c == '*' || c == '/' || c == '^';
-
+        private static bool IsOperator(char c) => "+-*/^".Contains(c);
         private static bool IsFunction(string op) => op == "sin" || op == "cos" || op == "tan" || op == "log" || op == "rt";
 
         private static void Apply(Stack<double> operands, string op)
         {
             if (op == "sin" || op == "cos" || op == "tan")
             {
-                double b = operands.Pop();
-                double radians = b * Math.PI / 180;
-
-                switch (op)
-                {
-                    case "sin": operands.Push(Math.Sin(radians)); break;
-                    case "cos": operands.Push(Math.Cos(radians)); break;
-                    case "tan": operands.Push(Math.Tan(radians)); break;
-                }
+                double radians = operands.Pop() * Math.PI / 180;
+                operands.Push(op == "sin" ? Math.Sin(radians) : op == "cos" ? Math.Cos(radians) : Math.Tan(radians));
+                return;
             }
-            else
-            {
-                double b = operands.Pop();
-                double a = operands.Pop();
 
-                switch (op)
-                {
-                    case "+": operands.Push(a + b); break;
-                    case "-": operands.Push(a - b); break;
-                    case "*": operands.Push(a * b); break;
-                    case "/": operands.Push(a / b); break;
-                    case "^": operands.Push(Math.Pow(a, b)); break;
-                    case "log": operands.Push(Math.Log(b, a)); break;
-                    case "rt": operands.Push(Math.Pow(b, 1 / a)); break;
-                }
+            double b = operands.Pop();
+            double a = operands.Pop();
+
+            switch (op)
+            {
+                case "+": operands.Push(a + b); break;
+                case "-": operands.Push(a - b); break;
+                case "*": operands.Push(a * b); break;
+                case "/": operands.Push(a / b); break;
+                case "^": operands.Push(Math.Pow(a, b)); break;
+                case "log": operands.Push(Math.Log(b, a)); break;
+                case "rt": operands.Push(Math.Pow(b, 1 / a)); break;
             }
         }
 
@@ -241,22 +236,22 @@ namespace Calculus
 
         private void Solve()
         {
-            string func = textBox1.Text.Replace("π", PiString).Replace("e", EString).Replace(" ", string.Empty);
+            string func = inputBox.Text
+                .Replace("π", Math.PI.ToString(EnUs))
+                .Replace("e", Math.E.ToString(EnUs))
+                .Replace(" ", string.Empty);
 
-            for (int i = 0; i < func.Length; i++)
+            if (inputBox.Text.Contains("x"))
             {
-                if (func[i] == '-' && (i == 0 || func[i - 1] == '('))
-                {
-                    func = func.Insert(i, "0");
-                }
+                ShowPlot();
+                return;
             }
 
             try
             {
-                double result = Evaluate(func);
-                Send(result.ToString(EnUs));
+                Send(Evaluate(func).ToString(EnUs));
             }
-            catch (Exception)
+            catch
             {
                 Send("error");
             }
@@ -264,18 +259,15 @@ namespace Calculus
 
         private void Send(string s)
         {
-            if (label1.Text == "⏶")
+            if (isLast)
             {
-                label1.Text = "⏷";
-                (temp, textBox2.Text) = (textBox2.Text, temp);
+                (buffer, outputBox.Text) = (outputBox.Text, buffer);
+                outputBox.ScrollToCaret();
+                isLast = false;
             }
 
-            if (textBox2.Text != string.Empty)
-                textBox2.AppendText(Environment.NewLine + s);
-            else
-                textBox2.AppendText(s);
-
-            temp = textBox1.Text;
+            outputBox.AppendText((outputBox.Text != string.Empty ? Environment.NewLine : "") + s);
+            buffer = inputBox.Text;
         }
 
         private void TextBox1_KeyDown(object sender, KeyEventArgs e)
@@ -287,16 +279,13 @@ namespace Calculus
             }
         }
 
-        private void Label1_Click(object sender, EventArgs e)
+        private void OutputBox_MouseDown(object sender, MouseEventArgs e)
         {
-            label1.Text = label1.Text == "⏷" ? "⏶" : "⏷";
-            (temp, textBox2.Text) = (textBox2.Text, temp);
-            textBox2.ScrollToCaret();
+            if (e.Button == MouseButtons.Right)
+            {
+                (buffer, outputBox.Text) = (outputBox.Text, buffer);
+                isLast = true;
+            }
         }
-    }
-
-    public class FixedRenderer : ToolStripSystemRenderer
-    {
-        protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e) { }
     }
 }
