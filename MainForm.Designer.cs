@@ -126,7 +126,7 @@
             this.backButton.Name = "backButton";
             this.backButton.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
             this.backButton.Size = new System.Drawing.Size(56, 35);
-            this.backButton.Text = "❮";
+            this.backButton.Text = "◁";
             this.backButton.Click += new System.EventHandler(this.ToolStripButton1_Click);
             // 
             // clearButton
@@ -135,7 +135,7 @@
             this.clearButton.AutoToolTip = false;
             this.clearButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.clearButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.clearButton.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.clearButton.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.clearButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.clearButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.clearButton.Margin = new System.Windows.Forms.Padding(0);
@@ -151,7 +151,7 @@
             this.fButton.AutoToolTip = false;
             this.fButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.fButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.fButton.Font = new System.Drawing.Font("Segoe UI", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.fButton.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.fButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.fButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.fButton.Margin = new System.Windows.Forms.Padding(0);
@@ -166,6 +166,7 @@
             this.s1Button.AutoSize = false;
             this.s1Button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.s1Button.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.s1Button.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.s1Button.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.s1Button.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.s1Button.Margin = new System.Windows.Forms.Padding(0);
@@ -181,6 +182,7 @@
             this.s2Button.AutoToolTip = false;
             this.s2Button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.s2Button.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.s2Button.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.s2Button.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.s2Button.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.s2Button.Margin = new System.Windows.Forms.Padding(0);
@@ -241,6 +243,7 @@
             this.rootButton.AutoToolTip = false;
             this.rootButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.rootButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.rootButton.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rootButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.rootButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.rootButton.Margin = new System.Windows.Forms.Padding(0);
@@ -256,6 +259,7 @@
             this.powerButton.AutoToolTip = false;
             this.powerButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.powerButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.powerButton.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.powerButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.powerButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.powerButton.Margin = new System.Windows.Forms.Padding(0);
@@ -316,6 +320,7 @@
             this.multButton.AutoToolTip = false;
             this.multButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.multButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.multButton.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.multButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.multButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.multButton.Margin = new System.Windows.Forms.Padding(0);
@@ -331,6 +336,7 @@
             this.divButton.AutoToolTip = false;
             this.divButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.divButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.divButton.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.divButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.divButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.divButton.Margin = new System.Windows.Forms.Padding(0);
@@ -391,6 +397,7 @@
             this.minusButton.AutoToolTip = false;
             this.minusButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.minusButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.minusButton.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.minusButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.minusButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.minusButton.Margin = new System.Windows.Forms.Padding(0);
@@ -406,6 +413,7 @@
             this.plusButton.AutoToolTip = false;
             this.plusButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.plusButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.plusButton.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.plusButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.plusButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.plusButton.Margin = new System.Windows.Forms.Padding(0);
@@ -467,6 +475,7 @@
             this.equalButton.AutoToolTip = false;
             this.equalButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.equalButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.equalButton.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.equalButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.equalButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.equalButton.Margin = new System.Windows.Forms.Padding(0);
