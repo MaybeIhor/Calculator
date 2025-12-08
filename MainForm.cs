@@ -16,6 +16,7 @@ namespace Calculus
         private static readonly CultureInfo EnUs = CultureInfo.GetCultureInfo("en-US");
         private string buffer = string.Empty;
         private bool isLast = false;
+        private static bool isRad = true;
 
         public form()
         {
@@ -120,7 +121,11 @@ namespace Calculus
         private void ToolStripButton26_Click(object sender, EventArgs e) => InsertText("cos(");
         private void ToolStripButton27_Click(object sender, EventArgs e) => InsertText("tan(");
         private void ToolStripButton28_Click(object sender, EventArgs e) => InsertText("log(10,");
-        private void ToolStripButton29_Click(object sender, EventArgs e) => InsertText("e");
+        private void ToolStripButton29_Click(object sender, EventArgs e)
+        {
+            isRad = !isRad;
+            switchButton.Text = isRad ? "rad" : "deg";
+        }
 
         public static double Evaluate(string ex)
         {
@@ -197,7 +202,7 @@ namespace Calculus
         {
             if (op == "sin" || op == "cos" || op == "tan")
             {
-                double radians = operands.Pop() * Math.PI / 180;
+                double radians = isRad ? operands.Pop() : (operands.Pop() * Math.PI / 180.0);
                 operands.Push(op == "sin" ? Math.Sin(radians) : op == "cos" ? Math.Cos(radians) : Math.Tan(radians));
                 return;
             }

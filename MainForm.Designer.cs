@@ -58,7 +58,7 @@
             this.cosButton = new System.Windows.Forms.ToolStripButton();
             this.tanButton = new System.Windows.Forms.ToolStripButton();
             this.logButton = new System.Windows.Forms.ToolStripButton();
-            this.eButton = new System.Windows.Forms.ToolStripButton();
+            this.switchButton = new System.Windows.Forms.ToolStripButton();
             this.inputBox = new System.Windows.Forms.TextBox();
             this.outputBox = new System.Windows.Forms.TextBox();
             this.toolStrip.SuspendLayout();
@@ -104,7 +104,7 @@
             this.cosButton,
             this.tanButton,
             this.logButton,
-            this.eButton});
+            this.switchButton});
             this.toolStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
             this.toolStrip.Location = new System.Drawing.Point(0, 133);
             this.toolStrip.Name = "toolStrip";
@@ -545,20 +545,20 @@
             this.logButton.Text = "log";
             this.logButton.Click += new System.EventHandler(this.ToolStripButton28_Click);
             // 
-            // eButton
+            // switchButton
             // 
-            this.eButton.AutoSize = false;
-            this.eButton.AutoToolTip = false;
-            this.eButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.eButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.eButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.eButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.eButton.Margin = new System.Windows.Forms.Padding(0);
-            this.eButton.Name = "eButton";
-            this.eButton.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
-            this.eButton.Size = new System.Drawing.Size(56, 34);
-            this.eButton.Text = "e";
-            this.eButton.Click += new System.EventHandler(this.ToolStripButton29_Click);
+            this.switchButton.AutoSize = false;
+            this.switchButton.AutoToolTip = false;
+            this.switchButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.switchButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.switchButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.switchButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.switchButton.Margin = new System.Windows.Forms.Padding(0);
+            this.switchButton.Name = "switchButton";
+            this.switchButton.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
+            this.switchButton.Size = new System.Drawing.Size(56, 34);
+            this.switchButton.Text = "rad";
+            this.switchButton.Click += new System.EventHandler(this.ToolStripButton29_Click);
             // 
             // inputBox
             // 
@@ -649,7 +649,7 @@
         private System.Windows.Forms.ToolStripButton cosButton;
         private System.Windows.Forms.ToolStripButton tanButton;
         private System.Windows.Forms.ToolStripButton logButton;
-        private System.Windows.Forms.ToolStripButton eButton;
+        private System.Windows.Forms.ToolStripButton switchButton;
         private System.Windows.Forms.TextBox outputBox;
     }
 }

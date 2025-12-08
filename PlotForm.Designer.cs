@@ -36,8 +36,6 @@
             // 
             this.plotBox.BackColor = System.Drawing.Color.White;
             this.plotBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.plotBox.FunctionX = "x^2";
-            this.plotBox.FunctionY = "y*2-y";
             this.plotBox.Location = new System.Drawing.Point(0, 0);
             this.plotBox.Name = "plotBox";
             this.plotBox.Size = new System.Drawing.Size(400, 400);
