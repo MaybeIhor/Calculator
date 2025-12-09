@@ -5,6 +5,8 @@ VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calculator", "Calculator.csproj", "{EA0C7491-79A7-4453-8A2D-BD6058E52D30}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Calculus-Installer", "..\Calculus-Installer\Calculus-Installer.vdproj", "{5489C1A8-F6E5-3D7A-32B9-80220057ED38}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{EA0C7491-79A7-4453-8A2D-BD6058E52D30}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EA0C7491-79A7-4453-8A2D-BD6058E52D30}.Release|x86.ActiveCfg = Release|x86
 		{EA0C7491-79A7-4453-8A2D-BD6058E52D30}.Release|x86.Build.0 = Release|x86
+		{5489C1A8-F6E5-3D7A-32B9-80220057ED38}.Debug|Any CPU.ActiveCfg = Debug
+		{5489C1A8-F6E5-3D7A-32B9-80220057ED38}.Debug|x86.ActiveCfg = Debug
+		{5489C1A8-F6E5-3D7A-32B9-80220057ED38}.Release|Any CPU.ActiveCfg = Release
+		{5489C1A8-F6E5-3D7A-32B9-80220057ED38}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
