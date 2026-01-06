@@ -14,14 +14,15 @@ namespace Calculus
         public static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, int[] val, int size);
 
         private static readonly CultureInfo EnUs = CultureInfo.GetCultureInfo("en-US");
-        private string buffer = string.Empty;
-        private bool isLast = false;
         private static bool isRad = true;
+        private static bool isInverse = false;
+        private bool dark = false;
+        private string prev = null;
 
         public form()
         {
             InitializeComponent();
-            ApplyTheme();
+            ApplySystemTheme();
             toolStrip.Renderer = new FixedRenderer();
             SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
         }
@@ -34,22 +35,22 @@ namespace Calculus
             }
         }
 
-        private void ApplyTheme()
+        private void ApplySystemTheme()
         {
-            if (IsDarkModeEnabled())
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize"))
             {
-                DwmSetWindowAttribute(Handle, 20, new[] { 1 }, 4);
-                Color darkBg = Color.FromArgb(255, 25, 25, 25);
-                Color darkerBg = Color.FromArgb(255, 19, 19, 19);
+                if (key?.GetValue("AppsUseLightTheme") is int theme && theme == 0)
+                {
+                    DwmSetWindowAttribute(Handle, 20, new[] { 1 }, 4);
+                    Color darkBg = Color.FromArgb(255, 25, 25, 25);
+                    Color darkerBg = Color.FromArgb(255, 19, 19, 19);
 
-                BackColor = inputBox.BackColor = toolStrip.BackColor = darkBg;
-                outputBox.BackColor = darkerBg;
-                toolStrip.ForeColor = inputBox.ForeColor = SystemColors.Window;
-                outputBox.ForeColor = SystemColors.ControlDark;
-            }
-            else
-            {
-                outputBox.ForeColor = SystemColors.WindowFrame;
+                    toolStrip.BackColor = darkBg;
+                    inputBox.BackColor = BackColor = outputBox.BackColor = darkerBg;
+                    toolStrip.ForeColor = inputBox.ForeColor = SystemColors.Window;
+                    invLabel.ForeColor = radLabel.ForeColor = histLabel.ForeColor = outputBox.ForeColor = SystemColors.ControlDark;
+                    dark = true;
+                }
             }
         }
 
@@ -79,18 +80,7 @@ namespace Calculus
 
         private void ShowPlot()
         {
-            if (string.IsNullOrEmpty(inputBox.Text))
-            {
-                inputBox.Text = "x^2; y*2";
-                return;
-            }
-
-            var plot = new plotForm();
-            if (IsDarkModeEnabled()) plot.SetDarkMode();
-
-            string[] parts = inputBox.Text.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-            plot.SetArguments(parts.Length > 0 ? parts[0].Trim() : null,
-                            parts.Length > 1 ? parts[1].Trim() : null);
+            var plot = new plotForm(dark);
             plot.Show();
         }
 
@@ -116,16 +106,17 @@ namespace Calculus
         private void ToolStripButton21_Click(object sender, EventArgs e) => InsertText("0");
         private void ToolStripButton22_Click(object sender, EventArgs e) => InsertText(".");
         private void ToolStripButton23_Click(object sender, EventArgs e) => InsertText("π");
-        private void ToolStripButton24_Click(object sender, EventArgs e) => Solve();
-        private void ToolStripButton25_Click(object sender, EventArgs e) => InsertText("sin(");
-        private void ToolStripButton26_Click(object sender, EventArgs e) => InsertText("cos(");
-        private void ToolStripButton27_Click(object sender, EventArgs e) => InsertText("tan(");
+        private void ToolStripButton25_Click(object sender, EventArgs e) => InsertText(isInverse ? "asin(" : "sin(");
+        private void ToolStripButton26_Click(object sender, EventArgs e) => InsertText(isInverse ? "acos(" : "cos(");
+        private void ToolStripButton27_Click(object sender, EventArgs e) => InsertText(isInverse ? "atan(" : "tan(");
         private void ToolStripButton28_Click(object sender, EventArgs e) => InsertText("log(10,");
-        private void ToolStripButton29_Click(object sender, EventArgs e)
+        private void ToolStripButton24_Click(object sender, EventArgs e)
         {
-            isRad = !isRad;
-            switchButton.Text = isRad ? "rad" : "deg";
+            prev = inputBox.Text;
+            inputBox.Text = outputBox.Text;
         }
+
+        private void FactButton_Click(object sender, EventArgs e) => InsertText("!");
 
         public static double Evaluate(string ex)
         {
@@ -141,8 +132,30 @@ namespace Calculus
                 if (char.IsDigit(ex[i]) || ex[i] == '.')
                 {
                     int start = i;
-                    while (i < ex.Length && (char.IsDigit(ex[i]) || ex[i] == '.')) i++;
-                    operands.Push(double.Parse(ex.Substring(start, i - start), EnUs));
+                    while (i < ex.Length && (char.IsDigit(ex[i]) || ex[i] == '.' || ex[i] == 'e'||
+                           (i > start && (ex[i] == '+' || ex[i] == '-') && (ex[i - 1] == 'e'))))
+                        i++;
+
+                    operands.Push(double.Parse(ex.Substring(start, i - start), NumberStyles.Float, EnUs));
+                    expectOperand = false;
+                }
+                else if (ex[i] == 'e' && (i == 0 || !char.IsDigit(ex[i - 1])))
+                {
+                    operands.Push(Math.E);
+                    i++;
+                    expectOperand = false;
+                }
+                else if (ex[i] == 'π' && (i == 0 || !char.IsDigit(ex[i - 1])))
+                {
+                    operands.Push(Math.PI);
+                    i++;
+                    expectOperand = false;
+                }
+                else if (ex[i] == '!')
+                {
+                    double val = operands.Pop();
+                    operands.Push(Factorial(val));
+                    i++;
                     expectOperand = false;
                 }
                 else if (ex[i] == '-' && expectOperand)
@@ -195,8 +208,19 @@ namespace Calculus
             return operands.Pop();
         }
 
+        private static double Factorial(double n)
+        {
+            if (n == 0 || n == 1) return 1;
+
+            double result = 1;
+            for (int i = 2; i <= n; i++)
+                result *= i;
+
+            return result;
+        }
+
         private static bool IsOperator(char c) => "+-*/^".Contains(c);
-        private static bool IsFunction(string op) => op == "sin" || op == "cos" || op == "tan" || op == "log" || op == "rt";
+        private static bool IsFunction(string op) => op == "sin" || op == "cos" || op == "tan" || op == "asin" || op == "acos" || op == "atan" || op == "log" || op == "rt";
 
         private static void Apply(Stack<double> operands, string op)
         {
@@ -204,6 +228,14 @@ namespace Calculus
             {
                 double radians = isRad ? operands.Pop() : (operands.Pop() * Math.PI / 180.0);
                 operands.Push(op == "sin" ? Math.Sin(radians) : op == "cos" ? Math.Cos(radians) : Math.Tan(radians));
+                return;
+            }
+
+            if (op == "asin" || op == "acos" || op == "atan")
+            {
+                double value = operands.Pop();
+                double result = op == "asin" ? Math.Asin(value) : op == "acos" ? Math.Acos(value) : Math.Atan(value);
+                operands.Push(isRad ? result : (result * 180.0 / Math.PI));
                 return;
             }
 
@@ -234,45 +266,28 @@ namespace Calculus
                 case "sin":
                 case "cos":
                 case "tan":
+                case "asin":
+                case "acos":
+                case "atan":
                 case "log": return 4;
                 default: return 0;
             }
         }
 
-        private void Solve()
+        private bool Solve()
         {
-            string func = inputBox.Text
-                .Replace("π", Math.PI.ToString(EnUs))
-                .Replace("e", Math.E.ToString(EnUs))
-                .Replace(" ", string.Empty);
-
-            if (inputBox.Text.Contains("x"))
-            {
-                ShowPlot();
-                return;
-            }
+            string func = inputBox.Text.Replace(" ", string.Empty);
 
             try
             {
-                Send(Evaluate(func).ToString(EnUs));
+                outputBox.Text = Evaluate(func).ToString(EnUs);
             }
             catch
             {
-                Send("error");
+                inputBox.ForeColor = Color.FromArgb(156, 40, 40);
+                return false;
             }
-        }
-
-        private void Send(string s)
-        {
-            if (isLast)
-            {
-                (buffer, outputBox.Text) = (outputBox.Text, buffer);
-                outputBox.ScrollToCaret();
-                isLast = false;
-            }
-
-            outputBox.AppendText((outputBox.Text != string.Empty ? Environment.NewLine : "") + s);
-            buffer = inputBox.Text;
+            return true;
         }
 
         private void TextBox1_KeyDown(object sender, KeyEventArgs e)
@@ -284,13 +299,34 @@ namespace Calculus
             }
         }
 
-        private void OutputBox_MouseDown(object sender, MouseEventArgs e)
+        private void InputBox_TextChanged(object sender, EventArgs e)
         {
-            if (e.Button == MouseButtons.Right)
+            if (Solve())
             {
-                (buffer, outputBox.Text) = (outputBox.Text, buffer);
-                isLast = true;
+                if (IsDarkModeEnabled())
+                    inputBox.ForeColor = SystemColors.Window;
+                else
+                    inputBox.ForeColor = SystemColors.WindowText;
             }
+        }
+
+        private void radLabel_Click(object sender, EventArgs e)
+        {
+            isRad = !isRad;
+            radLabel.Text = isRad ? "rad" : "deg";
+            Solve();
+        }
+
+        private void invLabel_Click(object sender, EventArgs e)
+        {
+            isInverse = !isInverse;
+            invLabel.Text = isInverse ? "inv" : "std";
+        }
+
+        private void histLabel_Click(object sender, EventArgs e)
+        {
+            if (prev != null)
+                inputBox.Text = prev;
         }
     }
 }

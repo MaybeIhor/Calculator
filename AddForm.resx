@@ -120,17 +120,4 @@
   <metadata name="toolStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>39</value>
-  </metadata>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        AAABAAEAICAAAAAAIADxAAAAFgAAAIlQTkcNChoKAAAADUlIRFIAAAAgAAAAIAgGAAAAc3p69AAAAAFz
-        UkdCAK7OHOkAAAAEZ0FNQQAAsY8L/GEFAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAhklEQVRYR+3TzQ2A
-        IAyGYTfrDu7HoRNwZgd2QiGpSQnGn1Qp2sObGA35ngNOAJB6VgAhhC59B4CIpbPPlAHEAHfTCYB5/T8f
-        jG2pAXjvt1qHXHSl1rersS0C0A3N1QdoXArAtoYA5P4NoPEasff+KLY1BEA6tqUS8GYGMIABDGAAPYB+
-        QVoA9js5K1LO1v4AAAAASUVORK5CYII=
-</value>
-  </data>
 </root>
