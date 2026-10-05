@@ -1,6 +1,6 @@
 ﻿namespace Calculus
 {
-    partial class plotForm
+    partial class PlotForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,9 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(plotForm));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PlotForm));
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.addButton = new System.Windows.Forms.ToolStripButton();
+            this.leftButton = new System.Windows.Forms.ToolStripButton();
+            this.rightButton = new System.Windows.Forms.ToolStripButton();
             this.plotBox = new Calculus.PlotBox();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
@@ -47,7 +49,9 @@
             this.toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.addButton});
+            this.addButton,
+            this.leftButton,
+            this.rightButton});
             this.toolStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
             this.toolStrip.Location = new System.Drawing.Point(0, 400);
             this.toolStrip.Name = "toolStrip";
@@ -72,6 +76,36 @@
             this.addButton.Size = new System.Drawing.Size(50, 29);
             this.addButton.Text = "✛";
             // 
+            // leftButton
+            // 
+            this.leftButton.AutoSize = false;
+            this.leftButton.AutoToolTip = false;
+            this.leftButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.leftButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.leftButton.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.leftButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.leftButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.leftButton.Margin = new System.Windows.Forms.Padding(1, 1, 0, 1);
+            this.leftButton.Name = "leftButton";
+            this.leftButton.Size = new System.Drawing.Size(50, 29);
+            this.leftButton.Text = "◁";
+            this.leftButton.Click += new System.EventHandler(this.LeftButton_Click);
+            // 
+            // rightButton
+            // 
+            this.rightButton.AutoSize = false;
+            this.rightButton.AutoToolTip = false;
+            this.rightButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.rightButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.rightButton.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rightButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.rightButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.rightButton.Margin = new System.Windows.Forms.Padding(1, 1, 0, 1);
+            this.rightButton.Name = "rightButton";
+            this.rightButton.Size = new System.Drawing.Size(50, 29);
+            this.rightButton.Text = "▷";
+            this.rightButton.Click += new System.EventHandler(this.RightButton_Click);
+            // 
             // plotBox
             // 
             this.plotBox.BackColor = System.Drawing.Color.White;
@@ -92,7 +126,7 @@
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.MinimumSize = new System.Drawing.Size(416, 439);
+            this.MinimumSize = new System.Drawing.Size(416, 470);
             this.Name = "plotForm";
             this.Text = "Plot";
             this.toolStrip.ResumeLayout(false);
@@ -106,5 +140,7 @@
         private PlotBox plotBox;
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ToolStripButton addButton;
+        private System.Windows.Forms.ToolStripButton leftButton;
+        private System.Windows.Forms.ToolStripButton rightButton;
     }
 }

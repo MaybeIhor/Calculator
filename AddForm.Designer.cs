@@ -1,6 +1,6 @@
 ﻿namespace Calculus
 {
-    partial class addForm
+    partial class AddForm
     {
         /// <summary>
         /// Required designer variable.

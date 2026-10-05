@@ -1,11 +1,12 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("Calculator")]
+[assembly: AssemblyTitle("Plot & Calculator")]
 [assembly: AssemblyDescription("A calculator program")]
-[assembly: AssemblyProduct("Calculator")]
+[assembly: AssemblyProduct("Plot & Calculator")]
+[assembly: AssemblyCompany("Postihor")]
 [assembly: AssemblyCopyright("Copyright © 2025")]
 [assembly: ComVisible(false)]
 
-[assembly: AssemblyVersion("1.0.7")]
-[assembly: AssemblyFileVersion("1.0.7")]
+[assembly: AssemblyVersion("1.0.8")]
+[assembly: AssemblyFileVersion("1.0.8")]

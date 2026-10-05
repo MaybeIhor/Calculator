@@ -4,15 +4,12 @@ using System.Windows.Forms;
 
 namespace Calculus
 {
-    public partial class addForm : Form
+    public partial class AddForm : System.Windows.Forms.Form
     {
         public string FunctionExpression => functionBox.Text;
         public Color FunctionColor { get; private set; } = Color.Blue;
 
-        [System.Runtime.InteropServices.DllImport("dwmapi.dll", PreserveSig = true)]
-        public static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, int[] val, int size);
-
-        public addForm(bool dark)
+        public AddForm(bool dark)
         {
             InitializeComponent();
             toolStrip.Renderer = new FixedRenderer();
@@ -24,23 +21,16 @@ namespace Calculus
 
         public void GetDark()
         {
-            DwmSetWindowAttribute(Handle, 20, new[] { 1 }, 4);
-            toolStrip.BackColor = Color.FromArgb(25, 25, 25);
-            functionBox.BackColor = Color.FromArgb(25, 25, 25);
-            colorBox.BackColor = Color.FromArgb(25, 25, 25);
-            toolStrip.ForeColor = SystemColors.Window;
-            functionBox.ForeColor = SystemColors.Window;
-            colorBox.ForeColor = SystemColors.Window;
+            Dwm.DwmSetWindowAttribute(Handle, 20, new[] { 1 }, 4);
+
+            var bg = Color.FromArgb(25, 25, 25);
+            toolStrip.BackColor = functionBox.BackColor = colorBox.BackColor = bg;
+            toolStrip.ForeColor = functionBox.ForeColor = colorBox.ForeColor = SystemColors.Window;
         }
 
         private void OkButton_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(functionBox.Text))
-            {
-                DialogResult = DialogResult.None;
-            }
-            else
-                DialogResult = DialogResult.OK;
+            DialogResult = string.IsNullOrWhiteSpace(functionBox.Text) ? DialogResult.None : DialogResult.OK;
             Close();
         }
 
@@ -50,16 +40,14 @@ namespace Calculus
             Close();
         }
 
-        private void ColorBox_TextChanged(object sender, EventArgs e)
-        {
-            Change_Color();
-        }
+        private void ColorBox_TextChanged(object sender, EventArgs e) => Change_Color();
 
         private void Change_Color()
         {
             try
             {
                 string hex = colorBox.Text.TrimStart('#');
+
                 if (hex.Length == 6)
                 {
                     FunctionColor = ColorTranslator.FromHtml("#" + hex);
@@ -68,6 +56,7 @@ namespace Calculus
             }
             catch { }
         }
+
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if (keyData == Keys.Enter)
@@ -75,11 +64,13 @@ namespace Calculus
                 OkButton_Click(this, EventArgs.Empty);
                 return true;
             }
+
             if (keyData == Keys.Escape)
             {
                 CancelButton_Click(this, EventArgs.Empty);
                 return true;
             }
+
             return base.ProcessCmdKey(ref msg, keyData);
         }
     }

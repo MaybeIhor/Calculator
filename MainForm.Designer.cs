@@ -1,6 +1,6 @@
 ﻿namespace Calculus
 {
-    partial class form
+    partial class Form
     {
         /// <summary>
         /// Required designer variable.
@@ -28,11 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(form));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form));
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.backButton = new System.Windows.Forms.ToolStripButton();
             this.clearButton = new System.Windows.Forms.ToolStripButton();
-            this.fButton = new System.Windows.Forms.ToolStripButton();
+            this.pButton = new System.Windows.Forms.ToolStripButton();
             this.s1Button = new System.Windows.Forms.ToolStripButton();
             this.s2Button = new System.Windows.Forms.ToolStripButton();
             this.d7Button = new System.Windows.Forms.ToolStripButton();
@@ -64,6 +64,8 @@
             this.radLabel = new System.Windows.Forms.Label();
             this.invLabel = new System.Windows.Forms.Label();
             this.histLabel = new System.Windows.Forms.Label();
+            this.flabel = new System.Windows.Forms.Label();
+            this.histBox = new System.Windows.Forms.TextBox();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -80,7 +82,7 @@
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.backButton,
             this.clearButton,
-            this.fButton,
+            this.pButton,
             this.s1Button,
             this.s2Button,
             this.d7Button,
@@ -147,21 +149,21 @@
             this.clearButton.Text = "C";
             this.clearButton.Click += new System.EventHandler(this.ToolStripButton2_Click);
             // 
-            // fButton
+            // pButton
             // 
-            this.fButton.AutoSize = false;
-            this.fButton.AutoToolTip = false;
-            this.fButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.fButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.fButton.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.fButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.fButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.fButton.Margin = new System.Windows.Forms.Padding(0);
-            this.fButton.Name = "fButton";
-            this.fButton.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
-            this.fButton.Size = new System.Drawing.Size(55, 43);
-            this.fButton.Text = "ƒ";
-            this.fButton.Click += new System.EventHandler(this.ToolStripButton3_Click);
+            this.pButton.AutoSize = false;
+            this.pButton.AutoToolTip = false;
+            this.pButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.pButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.pButton.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.pButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.pButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.pButton.Margin = new System.Windows.Forms.Padding(0);
+            this.pButton.Name = "pButton";
+            this.pButton.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
+            this.pButton.Size = new System.Drawing.Size(55, 43);
+            this.pButton.Text = "%";
+            this.pButton.Click += new System.EventHandler(this.PButton_Click);
             // 
             // s1Button
             // 
@@ -576,7 +578,6 @@
             this.inputBox.TabIndex = 1;
             this.inputBox.WordWrap = false;
             this.inputBox.TextChanged += new System.EventHandler(this.InputBox_TextChanged);
-            this.inputBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TextBox1_KeyDown);
             // 
             // outputBox
             // 
@@ -605,7 +606,7 @@
             this.radLabel.TabIndex = 3;
             this.radLabel.Text = "rad";
             this.radLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.radLabel.Click += new System.EventHandler(this.radLabel_Click);
+            this.radLabel.Click += new System.EventHandler(this.RadLabel_Click);
             // 
             // invLabel
             // 
@@ -618,7 +619,7 @@
             this.invLabel.TabIndex = 4;
             this.invLabel.Text = "std";
             this.invLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.invLabel.Click += new System.EventHandler(this.invLabel_Click);
+            this.invLabel.Click += new System.EventHandler(this.InvLabel_Click);
             // 
             // histLabel
             // 
@@ -631,14 +632,46 @@
             this.histLabel.TabIndex = 6;
             this.histLabel.Text = "⟲";
             this.histLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.histLabel.Click += new System.EventHandler(this.histLabel_Click);
+            this.histLabel.Click += new System.EventHandler(this.HistLabel_Click);
             // 
-            // form
+            // flabel
+            // 
+            this.flabel.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.flabel.ForeColor = System.Drawing.SystemColors.WindowFrame;
+            this.flabel.Location = new System.Drawing.Point(144, 0);
+            this.flabel.Margin = new System.Windows.Forms.Padding(0);
+            this.flabel.Name = "flabel";
+            this.flabel.Size = new System.Drawing.Size(48, 30);
+            this.flabel.TabIndex = 7;
+            this.flabel.Text = "ƒ";
+            this.flabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.flabel.Click += new System.EventHandler(this.Flabel_Click);
+            // 
+            // histBox
+            // 
+            this.histBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.histBox.CharacterCasing = System.Windows.Forms.CharacterCasing.Lower;
+            this.histBox.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.histBox.Font = new System.Drawing.Font("Ebrima", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.histBox.ForeColor = System.Drawing.SystemColors.WindowFrame;
+            this.histBox.Location = new System.Drawing.Point(0, 33);
+            this.histBox.Multiline = true;
+            this.histBox.Name = "histBox";
+            this.histBox.ReadOnly = true;
+            this.histBox.Size = new System.Drawing.Size(277, 311);
+            this.histBox.TabIndex = 8;
+            this.histBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.histBox.Visible = false;
+            this.histBox.WordWrap = false;
+            // 
+            // Form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(277, 344);
+            this.Controls.Add(this.histBox);
+            this.Controls.Add(this.flabel);
             this.Controls.Add(this.histLabel);
             this.Controls.Add(this.outputBox);
             this.Controls.Add(this.inputBox);
@@ -652,7 +685,7 @@
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(293, 383);
             this.MinimumSize = new System.Drawing.Size(293, 383);
-            this.Name = "form";
+            this.Name = "Form";
             this.Text = "Calculator";
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
@@ -666,7 +699,7 @@
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ToolStripButton backButton;
         private System.Windows.Forms.ToolStripButton clearButton;
-        private System.Windows.Forms.ToolStripButton fButton;
+        private System.Windows.Forms.ToolStripButton pButton;
         private System.Windows.Forms.ToolStripButton s1Button;
         private System.Windows.Forms.ToolStripButton s2Button;
         private System.Windows.Forms.TextBox inputBox;
@@ -698,6 +731,8 @@
         private System.Windows.Forms.Label radLabel;
         private System.Windows.Forms.Label invLabel;
         private System.Windows.Forms.Label histLabel;
+        private System.Windows.Forms.Label flabel;
+        private System.Windows.Forms.TextBox histBox;
     }
 }
 

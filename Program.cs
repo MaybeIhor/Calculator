@@ -12,7 +12,7 @@ namespace Calculus
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new form());
+            Application.Run(new Form());
         }
     }
     public class FixedRenderer : ToolStripSystemRenderer
@@ -77,5 +77,10 @@ namespace Calculus
                 }
             }
         }
+    }
+    internal static class Dwm
+    {
+        [DllImport("dwmapi.dll", PreserveSig = true)]
+        public static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, int[] val, int size);
     }
 }

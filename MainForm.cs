@@ -8,31 +8,19 @@ using Microsoft.Win32;
 
 namespace Calculus
 {
-    public partial class form : Form
+    public partial class Form : System.Windows.Forms.Form
     {
-        [System.Runtime.InteropServices.DllImport("dwmapi.dll", PreserveSig = true)]
-        public static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, int[] val, int size);
-
         private static readonly CultureInfo EnUs = CultureInfo.GetCultureInfo("en-US");
         private static bool isRad = true;
-        private static bool isInverse = false;
-        private bool dark = false;
-        private string prev = null;
+        private static bool isInverse;
+        private bool dark;
 
-        public form()
+        public Form()
         {
             InitializeComponent();
             ApplySystemTheme();
             toolStrip.Renderer = new FixedRenderer();
             SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
-        }
-
-        private bool IsDarkModeEnabled()
-        {
-            using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize"))
-            {
-                return key?.GetValue("AppsUseLightTheme") is object val && int.Parse(val.ToString()) == 0;
-            }
         }
 
         private void ApplySystemTheme()
@@ -41,14 +29,16 @@ namespace Calculus
             {
                 if (key?.GetValue("AppsUseLightTheme") is int theme && theme == 0)
                 {
-                    DwmSetWindowAttribute(Handle, 20, new[] { 1 }, 4);
+                    Dwm.DwmSetWindowAttribute(Handle, 20, new[] { 1 }, 4);
+
                     Color darkBg = Color.FromArgb(255, 25, 25, 25);
                     Color darkerBg = Color.FromArgb(255, 19, 19, 19);
 
                     toolStrip.BackColor = darkBg;
-                    inputBox.BackColor = BackColor = outputBox.BackColor = darkerBg;
+                    inputBox.BackColor = BackColor = outputBox.BackColor = histBox.BackColor = darkerBg;
                     toolStrip.ForeColor = inputBox.ForeColor = SystemColors.Window;
-                    invLabel.ForeColor = radLabel.ForeColor = histLabel.ForeColor = outputBox.ForeColor = SystemColors.ControlDark;
+                    invLabel.ForeColor = radLabel.ForeColor = histLabel.ForeColor = outputBox.ForeColor = histBox.ForeColor = SystemColors.ControlDark;
+
                     dark = true;
                 }
             }
@@ -76,13 +66,8 @@ namespace Calculus
         }
 
         private void ToolStripButton2_Click(object sender, EventArgs e) => inputBox.Clear();
-        private void ToolStripButton3_Click(object sender, EventArgs e) => ShowPlot();
 
-        private void ShowPlot()
-        {
-            var plot = new plotForm(dark);
-            plot.Show();
-        }
+        private void ShowPlot() => new PlotForm(dark).Show();
 
         private void InsertText(string text) => inputBox.SelectedText = text;
 
@@ -110,132 +95,196 @@ namespace Calculus
         private void ToolStripButton26_Click(object sender, EventArgs e) => InsertText(isInverse ? "acos(" : "cos(");
         private void ToolStripButton27_Click(object sender, EventArgs e) => InsertText(isInverse ? "atan(" : "tan(");
         private void ToolStripButton28_Click(object sender, EventArgs e) => InsertText("log(10,");
-        private void ToolStripButton24_Click(object sender, EventArgs e)
+        private void ToolStripButton24_Click(object sender, EventArgs e) => Entry();
+
+        private void Entry()
         {
-            prev = inputBox.Text;
+            if (outputBox.Text.Length > 0)
+            {
+                histBox.AppendText(inputBox.Text + " =" + Environment.NewLine);
+                histBox.AppendText(outputBox.Text + Environment.NewLine);
+            }
+
             inputBox.Text = outputBox.Text;
         }
 
+        private void PButton_Click(object sender, EventArgs e) => InsertText("%");
         private void FactButton_Click(object sender, EventArgs e) => InsertText("!");
 
         public static double Evaluate(string ex)
         {
+            ex = ex.ToLowerInvariant();
+
             var operands = new Stack<double>();
             var operators = new Stack<string>();
+
             int i = 0;
             bool expectOperand = true;
 
             while (i < ex.Length)
             {
-                if (char.IsWhiteSpace(ex[i])) { i++; continue; }
+                char c = ex[i];
 
-                if (char.IsDigit(ex[i]) || ex[i] == '.')
+                if (char.IsWhiteSpace(c))
+                {
+                    i++;
+                    continue;
+                }
+
+                if (char.IsDigit(c) || c == '.')
                 {
                     int start = i;
-                    while (i < ex.Length && (char.IsDigit(ex[i]) || ex[i] == '.' || ex[i] == 'e'||
-                           (i > start && (ex[i] == '+' || ex[i] == '-') && (ex[i - 1] == 'e'))))
+
+                    while (i < ex.Length &&
+                           (char.IsDigit(ex[i]) || ex[i] == '.' || ex[i] == 'e' ||
+                            (i > start && (ex[i] == '+' || ex[i] == '-') && ex[i - 1] == 'e')))
                         i++;
 
                     operands.Push(double.Parse(ex.Substring(start, i - start), NumberStyles.Float, EnUs));
                     expectOperand = false;
                 }
-                else if (ex[i] == 'e' && (i == 0 || !char.IsDigit(ex[i - 1])))
+                else if (c == 'e' && (i == 0 || !char.IsDigit(ex[i - 1])))
                 {
                     operands.Push(Math.E);
                     i++;
                     expectOperand = false;
                 }
-                else if (ex[i] == 'π' && (i == 0 || !char.IsDigit(ex[i - 1])))
+                else if (c == 'π' && (i == 0 || !char.IsDigit(ex[i - 1])))
                 {
                     operands.Push(Math.PI);
                     i++;
                     expectOperand = false;
                 }
-                else if (ex[i] == '!')
+                else if (c == '!')
                 {
-                    double val = operands.Pop();
-                    operands.Push(Factorial(val));
+                    operands.Push(Factorial(operands.Pop()));
                     i++;
                     expectOperand = false;
                 }
-                else if (ex[i] == '-' && expectOperand)
+                else if (c == '%')
+                {
+                    operands.Push(operands.Pop() / 100.0);
+                    i++;
+                    expectOperand = false;
+                }
+                else if (c == '-' && expectOperand)
                 {
                     operands.Push(0);
                     operators.Push("-");
                     i++;
                 }
-                else if (char.IsLetter(ex[i]))
+                else if (c == '+' && expectOperand)
+                {
+                    i++;
+                }
+                else if (char.IsLetter(c))
                 {
                     int start = i;
-                    while (i < ex.Length && char.IsLetter(ex[i])) i++;
+
+                    while (i < ex.Length && char.IsLetter(ex[i]))
+                        i++;
+
                     operators.Push(ex.Substring(start, i - start));
                     expectOperand = true;
                 }
-                else if (ex[i] == '(')
+                else if (c == '(')
                 {
                     operators.Push("(");
                     i++;
                     expectOperand = true;
                 }
-                else if (ex[i] == ',')
+                else if (c == ',')
                 {
-                    while (operators.Peek() != "(") Apply(operands, operators.Pop());
+                    while (operators.Peek() != "(")
+                        Apply(operands, operators.Pop());
+
                     i++;
                     expectOperand = true;
                 }
-                else if (ex[i] == ')')
+                else if (c == ')')
                 {
-                    while (operators.Peek() != "(") Apply(operands, operators.Pop());
+                    while (operators.Peek() != "(")
+                        Apply(operands, operators.Pop());
+
                     operators.Pop();
+
                     if (operators.Count > 0 && IsFunction(operators.Peek()))
                         Apply(operands, operators.Pop());
+
                     i++;
                     expectOperand = false;
                 }
-                else if (IsOperator(ex[i]))
+                else if (IsOperator(c))
                 {
-                    string op = ex[i].ToString();
-                    while (operators.Count > 0 && Precedence(operators.Peek()) >= Precedence(op))
+                    string op = c.ToString();
+                    bool rightAssociative = op == "^";
+
+                    while (operators.Count > 0 &&
+                           (rightAssociative
+                               ? Precedence(operators.Peek()) > Precedence(op)
+                               : Precedence(operators.Peek()) >= Precedence(op)))
                         Apply(operands, operators.Pop());
+
                     operators.Push(op);
                     i++;
                     expectOperand = true;
                 }
-                else throw new Exception();
+                else
+                {
+                    throw new Exception();
+                }
             }
 
-            while (operators.Count > 0) Apply(operands, operators.Pop());
+            while (operators.Count > 0)
+                Apply(operands, operators.Pop());
+
             return operands.Pop();
         }
 
         private static double Factorial(double n)
         {
+            if (n < 0 || n != Math.Floor(n))
+                throw new ArgumentException();
+
             if (n == 0 || n == 1) return 1;
 
             double result = 1;
+
             for (int i = 2; i <= n; i++)
                 result *= i;
 
             return result;
         }
 
-        private static bool IsOperator(char c) => "+-*/^".Contains(c);
+        private static bool IsOperator(char c) => "+-*/^%".Contains(c);
+
         private static bool IsFunction(string op) => op == "sin" || op == "cos" || op == "tan" || op == "asin" || op == "acos" || op == "atan" || op == "log" || op == "rt";
 
         private static void Apply(Stack<double> operands, string op)
         {
             if (op == "sin" || op == "cos" || op == "tan")
             {
-                double radians = isRad ? operands.Pop() : (operands.Pop() * Math.PI / 180.0);
-                operands.Push(op == "sin" ? Math.Sin(radians) : op == "cos" ? Math.Cos(radians) : Math.Tan(radians));
+                double value = operands.Pop();
+                double radians = isRad ? value : value * Math.PI / 180.0;
+
+                operands.Push(
+                    op == "sin" ? Math.Sin(radians) :
+                    op == "cos" ? Math.Cos(radians) :
+                    Math.Tan(radians));
+
                 return;
             }
 
             if (op == "asin" || op == "acos" || op == "atan")
             {
                 double value = operands.Pop();
-                double result = op == "asin" ? Math.Asin(value) : op == "acos" ? Math.Acos(value) : Math.Atan(value);
-                operands.Push(isRad ? result : (result * 180.0 / Math.PI));
+
+                double result =
+                    op == "asin" ? Math.Asin(value) :
+                    op == "acos" ? Math.Acos(value) :
+                    Math.Atan(value);
+
+                operands.Push(isRad ? result : result * 180.0 / Math.PI);
                 return;
             }
 
@@ -250,7 +299,7 @@ namespace Calculus
                 case "/": operands.Push(a / b); break;
                 case "^": operands.Push(Math.Pow(a, b)); break;
                 case "log": operands.Push(Math.Log(b, a)); break;
-                case "rt": operands.Push(Math.Pow(b, 1 / a)); break;
+                case "rt": operands.Push(Math.Pow(b, 1.0 / a)); break;
             }
         }
 
@@ -287,46 +336,47 @@ namespace Calculus
                 inputBox.ForeColor = Color.FromArgb(156, 40, 40);
                 return false;
             }
+
             return true;
         }
 
-        private void TextBox1_KeyDown(object sender, KeyEventArgs e)
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (e.KeyCode == Keys.Enter)
-            {
-                e.SuppressKeyPress = true;
-                Solve();
-            }
+            if (keyData == Keys.Enter) { Entry(); return true; }
+            return base.ProcessCmdKey(ref msg, keyData);
         }
 
         private void InputBox_TextChanged(object sender, EventArgs e)
         {
             if (Solve())
-            {
-                if (IsDarkModeEnabled())
-                    inputBox.ForeColor = SystemColors.Window;
-                else
-                    inputBox.ForeColor = SystemColors.WindowText;
-            }
+                inputBox.ForeColor = dark ? SystemColors.Window : SystemColors.WindowText;
         }
 
-        private void radLabel_Click(object sender, EventArgs e)
+        private void RadLabel_Click(object sender, EventArgs e)
         {
             isRad = !isRad;
             radLabel.Text = isRad ? "rad" : "deg";
             Solve();
         }
 
-        private void invLabel_Click(object sender, EventArgs e)
+        private void InvLabel_Click(object sender, EventArgs e)
         {
             isInverse = !isInverse;
             invLabel.Text = isInverse ? "inv" : "std";
         }
 
-        private void histLabel_Click(object sender, EventArgs e)
+        private void HistLabel_Click(object sender, EventArgs e)
         {
-            if (prev != null)
-                inputBox.Text = prev;
+            histBox.Visible = !histBox.Visible;
+
+            if (histBox.Visible)
+            {
+                histBox.SelectionStart = histBox.TextLength;
+                histBox.SelectionLength = 0;
+                histBox.ScrollToCaret();
+            }
         }
+
+        private void Flabel_Click(object sender, EventArgs e) => ShowPlot();
     }
 }
